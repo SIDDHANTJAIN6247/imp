@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+    </nav>
+
+    <h1>To-Do List</h1>
+
+    <input type="text" id="task-input" placeholder="Enter a task">
+    <button id="add-task-btn">Add Task</button>
+
+    <ul id="todo-list"></ul>
+
+    <script>
+        const addTaskBtn = document.getElementById('add-task-btn');
+        const taskInput = document.getElementById('task-input');
+        const todoList = document.getElementById('todo-list');
+
+        function addTask() {
+            const taskText = taskInput.value.trim();
+            if (taskText !== '') {
+                const li = document.createElement('li');
+                li.innerHTML = `${taskText} <button onclick="deleteTask(this)">Delete</button>`;
+                todoList.appendChild(li);
+                taskInput.value = '';
+                saveTasks();
+            }
+        }
+
+        function deleteTask(button) {
+            const li = button.parentElement;
+            todoList.removeChild(li);
+            saveTasks();
+        }
+
+        function saveTasks() {
+            const tasks = [];
+            const items = todoList.querySelectorAll('li');
+            items.forEach(item => tasks.push(item.firstChild.textContent.trim()));
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+        }
+
+        function loadTasks() {
+            const tasks = JSON.parse(localStorage.getItem('tasks'));
+            if (tasks) {
+                tasks.forEach(task => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `${task} <button onclick="deleteTask(this)">Delete</button>`;
+                    todoList.appendChild(li);
+                });
+            }
+        }
+
+        window.onload = function() {
+            loadTasks();
+        };
+
+        addTaskBtn.addEventListener('click', addTask);
+        taskInput.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                addTask();
+            }
+        });
+    </script>
+</body>
+</html>
